@@ -1,0 +1,11 @@
+env/
+venv
+.env
+.pip-cache/
+**/__pycache__/
+service-account-credentials.json
+tests-report.xml
+.pytest_cache
+.idea
+.vscode
+session.sql
