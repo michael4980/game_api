@@ -8,7 +8,7 @@ from fastapi.exceptions import HTTPException
 class NewUserHandler(BaseHandler):
     @classmethod
     async def handle(cls, request: NewUserRequest):
-        if user_exists := await cls._check_user_existance(request.name):
+        if await cls._is_user_exists(request.name):
             raise HTTPException(status_code=409, detail=f"User with name {request.name} already exists")
         await cls._create_user(request)
         return StatusOkResponse()
@@ -27,13 +27,13 @@ class NewUserHandler(BaseHandler):
         await LocalMysql().execute(sql, args)
 
     @staticmethod
-    async def _check_user_existance(name: str) -> bool:
+    async def _is_user_exists(name: str) -> bool:
         sql = """
             SELECT * FROM users
             WHERE `name`="{value}"
             LIMIT 1;
         """
         sql = sql.format(value=name)
-        if response := await LocalMysql().select(sql):
+        if await LocalMysql().select(sql):
             return True
         return False
